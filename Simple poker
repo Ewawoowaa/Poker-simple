@@ -1,0 +1,146 @@
+import random
+
+
+
+class Card:
+    def __init__(self,suit,value):
+        self.suit = suit
+        self.value = value
+    def show(self):
+        print('{}{}'.format(self.value,self.suit))
+
+
+
+
+class Deck:
+    def __init__(self):
+        self.cards=[]
+        self.build()
+
+    def build(self):
+        for s in ['S','C','D','H']:
+            for v in range(2,15):
+                self.cards.append(Card(s,v))
+    def show(self):
+        for c in self.cards:
+            c.show()
+
+    def shuffle(self):
+        for i in range(len(self.cards)-1,0,-1):
+            r=random.randint(0,i)
+            self.cards[i],self.cards[r]=self.cards[r],self.cards[i]
+    def drawCard(self):
+        return self.cards.pop()
+
+
+
+
+class Player:
+    def __init__(self):
+        self.hand=[]
+
+    def draw(self,deck):
+        self.hand.append(deck.drawCard())
+
+
+    def showHand(self):
+        for card in self.hand:
+            card.show()
+
+
+
+    def poker(hands):
+        hands=hands.split()
+        return max(hands,key=hand_rank)
+
+
+
+
+
+    def card_rank(hand):
+        ranks=['--23456789TJQKA'.index(r) for r,s in hand]
+        ranks.sort(reverse=True)
+        return [5,4,3,2,1] if (ranks==[14,5,4,3,2]) else ranks
+
+    def straight(ranks):
+        return max(ranks)-min(ranks)==4 and len(set(ranks))==5
+
+    def flush(hand):
+        suits=[s for r,s in hand]
+        return len(set(suits))==1
+
+    def kind(n,ranks):
+        for r in ranks:
+            if ranks.count(r) == n : return r
+        return None
+
+    def two_pair(ranks):
+        pair=kind(2,ranks)
+        lowpair=kind(2,list(reversed(ranks)))
+        if pair and lowpair !=pair:
+            return (pair, lowpair)
+        else:
+            return None
+
+    def hand_rank(hand):
+        ranks = card_rank(hand)
+
+        if straight(ranks) and flush(suit):
+            return (8, max(ranks))
+
+        elif kind(4, ranks):
+            return (7, kind(4, ranks), kind(1, ranks))
+
+        elif kind(3, ranks) and kind(2, ranks):
+            return (6, kind(3, ranks), kind(2, ranks))
+
+        elif flush(hand):
+            return (5, ranks)
+
+        elif straight(ranks):
+            return (4, max(ranks))
+
+        elif kind(3, ranks):
+            return (3, kind(3, ranks), ranks)
+
+        elif two_pair(ranks):
+            return (2, two_pair(ranks), ranks)
+
+        elif kind(2, ranks):
+            return (1, kind(2, ranks), ranks)
+
+        else:
+            return (0, ranks)
+
+
+
+
+
+
+d=Deck()
+d.shuffle()
+
+Hero=Player()
+Villain=Player()
+
+Hero.draw(d)
+Hero.draw(d)
+Hero.draw(d)
+Hero.draw(d)
+Hero.draw(d)
+
+Villain.draw(d)
+Villain.draw(d)
+Villain.draw(d)
+Villain.draw(d)
+Villain.draw(d)
+
+
+
+print('Heroes Hand:')
+Hero.showHand()
+print('Villains Hand:')
+Villain.showHand()
+
+
+
